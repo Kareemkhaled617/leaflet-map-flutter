@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ProviderState>(
-      create: (BuildContext context)=>ProviderState()..getData('0')..getMarkers('0')..checkLocation()..checkEnternet(),
+      create: (BuildContext context)=>ProviderState()..getData('0')..getMarkers('0')..checkLocation()..checkEnternet()..getSliderData('0'),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',

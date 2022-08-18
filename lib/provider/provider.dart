@@ -9,13 +9,16 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../Widgets/custom_container.dart';
+import '../component/color.dart';
 import '../homa_page.dart';
 
 class ProviderState with ChangeNotifier {
   List<Marker> markers = [];
   List location = [];
   List category = [];
+  List sliderData = [];
   bool search = false;
+  bool slider = false;
 
   void changeState() {
     search = !search;
@@ -30,8 +33,22 @@ class ProviderState with ChangeNotifier {
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
       category = data;
+      notifyListeners();
+      return data;
+    } else {
+      print("Error");
+    }
+  }
+  getSliderData(String id) async {
+    String url =
+        'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=30.4203482&long=31.0699247&cat=$id';
+    final res = await http.get(Uri.parse(url));
+
+    if (res.statusCode == 200) {
+      var data = json.decode(res.body);
+      sliderData = data;
       print('**********************************');
-      print(category);
+      print(sliderData);
       notifyListeners();
       return data;
     } else {
@@ -43,12 +60,9 @@ class ProviderState with ChangeNotifier {
     String url =
         'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=30.4203482&long=31.0699247&cat=$id';
     final res = await http.get(Uri.parse(url)).then((value) {
-      print(value.body);
       if (value.statusCode == 200) {
         var data = json.decode(value.body);
         location = data;
-        print('-----------------------------');
-        print(location);
         markers.clear();
         location.forEach((element) {
           markers.add(Marker(
@@ -66,64 +80,16 @@ class ProviderState with ChangeNotifier {
                 ),
               ),
               onTap: () {
-                showModalBottomSheet(
-                    context: ctx,
-                    builder: (builder) {
-                      return Container(
-                        height: 350.0,
-                        color: Colors.transparent,
-                        //could change this to Color(0xFF737373),
-                        //so you don't have to change MaterialApp canvasColor
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10.0),
-                                  topRight: Radius.circular(10.0))),
-                        ),
-                      );
-                    });
+               changeSlider();
               },
             ),
           ));
         });
-        print('----------');
-        print(markers);
-        print('----------');
-        notifyListeners();
 
-        print(data);
+        notifyListeners();
       }
     });
 
-    // if (res.statusCode == 200) {
-    //   var data = json.decode(res.body);
-    //   for (int i in data) {
-    //     location = data;
-    //     print(data);
-    //     markers.add(Marker(
-    //       point: LatLng(
-    //           double.parse(data[i]['lat']), double.parse(data[i]['long'])),
-    //       builder: (ctx) => Container(
-    //         key: const Key('blue'),
-    //         child: const Icon(
-    //           Icons.location_on,
-    //           color: Colors.red,
-    //           size: 30.0,
-    //         ),
-    //       ),
-    //     ));
-    //
-    //     print(markers);
-    //     notifyListeners();
-    //     print('----------------');
-    //     print(data);
-    //     print('----------------------');
-    //     return data;
-    //   }
-    // } else {
-    //   print("Error");
-    // }
   }
 
   Future<Position?> checkLocation() async {
@@ -161,6 +127,11 @@ class ProviderState with ChangeNotifier {
     } else {
       print('Connection failed');
     }
+    notifyListeners();
+  }
+
+  void changeSlider(){
+    slider=!slider;
     notifyListeners();
   }
 }
