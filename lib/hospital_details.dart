@@ -1,17 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'component/to_map.dart';
 
 class HospitalDetails extends StatefulWidget {
-  HospitalDetails(
-      {Key? key,
-      required this.data,
-      required this.id,
-      required this.url,
-      required this.address})
-      : super(key: key);
+  HospitalDetails({
+    Key? key,
+    required this.data,
+    required this.id,
+    required this.url,
+    required this.name,
+    required this.phone,
+    required this.rate,
+    required this.lat,
+    required this.lang,
+    required this.address,
+  }) : super(key: key);
   List data = [];
   String id;
   String url;
   String address;
+  String name;
+  String phone;
+  int rate;
+  double lat;
+  double lang;
 
   @override
   _HospitalDetailsState createState() => _HospitalDetailsState();
@@ -99,20 +114,35 @@ class _HospitalDetailsState extends State<HospitalDetails> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_outlined,
-              color: Colors.black87,
+          leading: Card(
+            elevation: 5,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: IconButton(
+              icon: Icon(
+                FontAwesomeIcons.arrowLeft,
+                color: Colors.grey.shade700,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
             ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
           ),
           actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.search, color: Colors.black),
-              onPressed: () {},
-            ),
+            Card(
+              elevation: 5,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              child: IconButton(
+                icon: Icon(
+                  FontAwesomeIcons.phone,
+                  color: Colors.grey.shade700,
+                ),
+                onPressed: () {
+                  launchUrl(Uri.parse('tel:/${widget.phone}'));
+                },
+              ),
+            )
           ],
         ),
         body: SizedBox(
@@ -121,7 +151,7 @@ class _HospitalDetailsState extends State<HospitalDetails> {
           child: Column(
             children: <Widget>[
               const Text(
-                "Hospital Center",
+                " Center",
                 style: TextStyle(
                     color: Colors.grey,
                     fontWeight: FontWeight.bold,
@@ -131,12 +161,129 @@ class _HospitalDetailsState extends State<HospitalDetails> {
                 height: 10,
               ),
               Container(
-                width: 350,
+                width: double.infinity,
                 height: 200,
+                margin: const EdgeInsets.only(left: 12, right: 12),
                 decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(15),
-                  image: DecorationImage(
-                      image: AssetImage(widget.url), fit: BoxFit.cover),
+                  // image: DecorationImage(
+                  //     image: AssetImage(widget.url), fit: BoxFit.cover),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 180,
+                      height: 300,
+                      margin: const EdgeInsets.only(right: 13),
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: Colors.grey, width: 2)),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24.0),
+                        child: const Image(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                              "https://lh5.googleusercontent.com/p/AF1QipMKRN-1zTYMUVPrH-CcKzfTo6Nai7wdL7D8PMkt=w340-h160-k-no"),
+                        ),
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.name,
+                          style: GoogleFonts.aleo(
+                              fontWeight: FontWeight.w700, fontSize: 20),
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: Text(
+                            widget.address,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600
+                            ),
+                            softWrap: true,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Card(
+                              child: Padding(
+                                padding: EdgeInsets.all(12.0),
+                                child: Center(
+                                  child: Icon(
+                                    FontAwesomeIcons.solidStar,
+                                    color: Colors.yellowAccent,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Rating',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  '${widget.rate} out of 5',
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Card(
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Icon(
+                                    FontAwesomeIcons.users,
+                                    color: Colors.purple,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Column(
+                              children: const [
+                                Text(
+                                  'Patient',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Text(
+                                  '+1000',
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
               const SizedBox(
@@ -153,6 +300,8 @@ class _HospitalDetailsState extends State<HospitalDetails> {
                     child: CategoriesScroller(
                       widget.id,
                       address: widget.address,
+                      lat: widget.lat,
+                      long: widget.lang,
                     )),
               ),
               Expanded(
@@ -197,22 +346,23 @@ class _HospitalDetailsState extends State<HospitalDetails> {
 }
 
 class CategoriesScroller extends StatefulWidget {
-  CategoriesScroller(this.id, {Key? key, required this.address})
-      : super(key: key);
+  CategoriesScroller(
+    this.id, {
+    Key? key,
+    required this.address,
+    required this.lat,
+    required this.long,
+  }) : super(key: key);
   String id;
   String address;
+  double lat;
+  double long;
 
   @override
   State<CategoriesScroller> createState() => _CategoriesScrollerState();
 }
 
 class _CategoriesScrollerState extends State<CategoriesScroller> {
-  bool star1 = false;
-  bool star2 = false;
-  bool star3 = false;
-  bool star4 = false;
-  bool star5 = false;
-
   @override
   Widget build(BuildContext context) {
     final double categoryHeight =
@@ -225,267 +375,57 @@ class _CategoriesScrollerState extends State<CategoriesScroller> {
         child: FittedBox(
           fit: BoxFit.fill,
           alignment: Alignment.topCenter,
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: 270,
-                margin: const EdgeInsets.only(right: 20),
-                height: categoryHeight,
-                decoration: BoxDecoration(
-                    color: Colors.teal.shade300,
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(20.0))),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Row(
-                            children: [
-                              IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      star1 = !star1;
-                                    });
-                                  },
-                                  icon:
-                                      star1 || star2 || star3 || star4 || star5
-                                          ? const Icon(
-                                              Icons.star,
-                                              size: 27,
-                                              color: Colors.yellow,
-                                            )
-                                          : const Icon(
-                                              Icons.star_border_outlined,
-                                              size: 27,
-                                              color: Colors.yellow,
-                                            )),
-                              IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      star2 = !star2;
-                                    });
-                                  },
-                                  icon: star2 || star3 || star4 || star5
-                                      ? const Icon(
-                                          Icons.star,
-                                          size: 27,
-                                          color: Colors.yellow,
-                                        )
-                                      : const Icon(
-                                          Icons.star_border_outlined,
-                                          size: 27,
-                                          color: Colors.yellow,
-                                        )),
-                              IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      star3 = !star3;
-                                    });
-                                  },
-                                  icon: star3 || star4 || star5
-                                      ? const Icon(
-                                          Icons.star,
-                                          size: 27,
-                                          color: Colors.yellow,
-                                        )
-                                      : const Icon(
-                                          Icons.star_border_outlined,
-                                          size: 27,
-                                          color: Colors.yellow,
-                                        )),
-                              IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      star4 = !star4;
-                                    });
-                                  },
-                                  icon: star4 || star5
-                                      ? const Icon(
-                                          Icons.star,
-                                          size: 27,
-                                          color: Colors.yellow,
-                                        )
-                                      : const Icon(
-                                          Icons.star_border_outlined,
-                                          size: 27,
-                                          color: Colors.yellow,
-                                        )),
-                              IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      star5 = !star5;
-                                    });
-                                  },
-                                  icon: star5
-                                      ? const Icon(
-                                          Icons.star,
-                                          size: 27,
-                                          color: Colors.yellow,
-                                        )
-                                      : const Icon(
-                                          Icons.star_border_outlined,
-                                          size: 27,
-                                          color: Colors.yellow,
-                                        )),
-                            ],
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(Icons.post_add_outlined),
-                            label: const Text(
-                              'Submit',
-                              style: TextStyle(
-                                  fontSize: 19, fontWeight: FontWeight.w700),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              elevation: MaterialStateProperty.all(10),
-                              shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                side: const BorderSide(
-                                    width: 2, color: Colors.white),
-                              )),
-                            ),
-                          ),
-                          ElevatedButton.icon(
-                            onPressed: () async {},
-                            icon: const Icon(Icons.add_comment_outlined),
-                            label: const Text(
-                              'Comment',
-                              style: TextStyle(
-                                  fontSize: 19, fontWeight: FontWeight.w700),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(Colors.transparent),
-                              elevation: MaterialStateProperty.all(10),
-                              shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                side: const BorderSide(
-                                    width: 2, color: Colors.teal),
-                              )),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+          child: Container(
+            width: 350,
+            margin: const EdgeInsets.only(right: 20),
+            height: categoryHeight,
+            decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: const BorderRadius.all(Radius.circular(20.0))),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  const Text(
+                    'Biography',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                   ),
-                ),
-              ),
-              Container(
-                width: 150,
-                margin: const EdgeInsets.only(right: 20),
-                height: categoryHeight,
-                decoration: BoxDecoration(
-                    color: Colors.orange.shade400,
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(20.0))),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Phone",
-                            style: TextStyle(
-                                fontSize: 21,
-                                color: Colors.black87,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            "01111419194",
-                            style: TextStyle(
-                                fontSize: 19,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
-                          Text(
-                            "Home",
-                            style: TextStyle(
-                              fontSize: 21,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            "0225173511",
-                            style: TextStyle(
-                                fontSize: 19,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ],
-                      ),
-                    ],
+                  const SizedBox(
+                    height: 5,
                   ),
-                ),
-              ),
-              Container(
-                width: 150,
-                margin: const EdgeInsets.only(right: 20),
-                height: categoryHeight,
-                decoration: BoxDecoration(
-                    color: Colors.blue.shade400,
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(20.0))),
-                child: const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Text(
-                      "عماره شمس \n ش اللاسلكي- المعادي الجديده - القاهره",
-                      style: TextStyle(
-                          fontSize: 20,
+                  const Text(
+                    '"Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                width: 150,
-                margin: const EdgeInsets.only(right: 20),
-                height: categoryHeight,
-                decoration: BoxDecoration(
-                    color: Colors.lightBlueAccent.shade400,
-                    borderRadius:
-                        const BorderRadius.all(Radius.circular(20.0))),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.address,
-                        style: const TextStyle(
-                            fontSize: 18,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: IconButton(
+                            icon: const Icon(
+                              FontAwesomeIcons.locationDot,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              MapUtils.map(widget.lat, widget.long);
+                            },
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

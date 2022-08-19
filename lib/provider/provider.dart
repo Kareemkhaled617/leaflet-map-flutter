@@ -10,7 +10,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../Widgets/custom_container.dart';
 import '../component/color.dart';
-import '../homa_page.dart';
+import '../hospital_details.dart';
 
 class ProviderState with ChangeNotifier {
   List<Marker> markers = [];
@@ -19,6 +19,10 @@ class ProviderState with ChangeNotifier {
   List sliderData = [];
   bool search = false;
   bool slider = false;
+  bool result = false;
+
+  double lat=30.4203482;
+  double long=31.0699247;
 
   void changeState() {
     search = !search;
@@ -29,7 +33,6 @@ class ProviderState with ChangeNotifier {
     String url =
         'https://ibtikarsoft.net/mapapi/categories.php?lang=en&cat=$id';
     final res = await http.get(Uri.parse(url));
-
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
       category = data;
@@ -56,7 +59,7 @@ class ProviderState with ChangeNotifier {
     }
   }
 
-  getMarkers(String id) async {
+  getMarkers(String id ) async {
     String url =
         'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=30.4203482&long=31.0699247&cat=$id';
     final res = await http.get(Uri.parse(url)).then((value) {
@@ -80,12 +83,66 @@ class ProviderState with ChangeNotifier {
                 ),
               ),
               onTap: () {
-               changeSlider();
+                print(element['id']);
+              // sliderData.firstWhere((element1) {
+              //   if(element1['id']!=id){
+              //     Navigator.of(ctx).push(MaterialPageRoute(
+              //         builder: (context) => HospitalDetails(
+              //           lang: double.parse(element1['long']),
+              //           rate: element1['rate'],
+              //           name: element1['name'],
+              //           phone: element1['phone'],
+              //           lat: double.parse(element1['lat']),
+              //           url: 'assets/images/hospital1/z.jpg',
+              //           id: '20',
+              //           data:  [
+              //             {
+              //               "name": element1['name'],
+              //               "brand": "Protect your child with us",
+              //               "price": 2.99,
+              //               "image": "assets/images/hospital1/n1.jpg"
+              //             },
+              //             {
+              //               "name": element1['name'],
+              //               "brand": "Your child is safe",
+              //               "price": 4.99,
+              //               "image": "assets/images/hospital1/n2.jpg"
+              //             },
+              //             {
+              //               "name": element1['name'],
+              //               "brand": "The best baby care",
+              //               "price": 1.49,
+              //               "image": "assets/images/hospital1/n3.jpg"
+              //             },
+              //             {
+              //               "name": element1['name'],
+              //               "brand": "24 hours service",
+              //               "price": 2.99,
+              //               "image": "assets/images/hospital1/n4.jpg"
+              //             },
+              //           ],
+              //           address:
+              //           'د. نشوة حسين العشرى - استشارى طب اطفال وحديثى الولادة والرضاعة الطبيعية',
+              //         )));
+              //   }
+              //   return true;
+              // });
               },
             ),
           ));
-        });
 
+        });
+        markers.add(Marker(
+          width: 50,
+          height: 50,
+          point: LatLng(
+              lat,long),
+          builder: (ctx) => const Icon(
+            FontAwesomeIcons.locationDot,
+            color: Colors.redAccent,
+            size: 35.0,
+          ),
+        ));
         notifyListeners();
       }
     });
@@ -113,20 +170,25 @@ class ProviderState with ChangeNotifier {
 
   Future<Position?> getCurrentLocation() async {
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    var lastPsition = await Geolocator.getLastKnownPosition();
+    Position? lastPsition = await Geolocator.getLastKnownPosition();
     print(lastPsition?.latitude);
     print(lastPsition?.longitude);
+    lat=lastPsition!.latitude;
+
+    long=lastPsition.longitude;
+    notifyListeners();
     return lastPsition;
     // locationMessage="$position.latitude ,$position.longitude";
   }
 
   void checkEnternet() async {
-    bool result = await InternetConnectionChecker().hasConnection;
-    if (result == true) {
+    bool result1 = await InternetConnectionChecker().hasConnection;
+    if (result1 == true) {
       print('Connection Done');
     } else {
       print('Connection failed');
     }
+    result=result1;
     notifyListeners();
   }
 
