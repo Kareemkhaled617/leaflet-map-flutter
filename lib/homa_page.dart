@@ -20,7 +20,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   double? lat;
   double? lan;
-  int xx = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -283,9 +282,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                           child: ListView.builder(
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
-                                            itemCount: -(p.sliderData[index]
-                                                    ['rate']) +
-                                                5,
+                                            itemCount: -(p.sliderData[index]['rate']) + 5,
+                                            //  itemCount: 5-int.parse(p.sliderData[index]['rate']),
                                             itemBuilder: (context, index) =>
                                                 const Icon(
                                               FontAwesomeIcons.star,
