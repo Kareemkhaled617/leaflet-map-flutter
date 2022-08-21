@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:leafleet_map/pages/test.dart';
 import 'package:leafleet_map/provider/provider.dart';
-import 'package:leafleet_map/splash.dart';
+
 import 'package:provider/provider.dart';
 
 
@@ -16,14 +17,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ProviderState>(
-      create: (BuildContext context)=>ProviderState()..getData('0')..getMarkers('0')..checkLocation()..checkEnternet()..getSliderData('0')..getCurrentLocation(),
+      create: (BuildContext context)=>ProviderState()..checkEnternet()
+        ..checkLocation(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: const SplashView(),
+        home: const Test(),
       ),
     );
   }

@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:leafleet_map/provider/provider.dart';
 import 'package:provider/provider.dart';
 
 import 'homa_page.dart';
+
 
 class SplashView extends StatefulWidget {
   const SplashView({Key? key}) : super(key: key);
@@ -40,7 +42,9 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   Widget build(BuildContext context) {
-    // print(Provider.of<ProviderState>(context).location);
+    // if(Provider.of<ProviderState>(context).val==LocationPermission.whileInUse){
+    //   Provider.of<ProviderState>(context).getCurrentLocation();
+    // }
     return Scaffold(
         body: Container(
       width: double.infinity,

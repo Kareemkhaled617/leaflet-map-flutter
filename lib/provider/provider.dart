@@ -10,7 +10,7 @@ import 'package:latlong2/latlong.dart';
 
 import '../Widgets/custom_container.dart';
 import '../component/color.dart';
-import '../hospital_details.dart';
+import '../pages/hospital_details.dart';
 
 class ProviderState with ChangeNotifier {
   List<Marker> markers = [];
@@ -20,9 +20,9 @@ class ProviderState with ChangeNotifier {
   bool search = false;
   bool slider = false;
   bool result = false;
-
-  double lat=30.4203482;
-  double long=31.0699247;
+  LocationPermission? val;
+  double? lat;
+  double? long;
 
   void changeState() {
     search = !search;
@@ -42,9 +42,10 @@ class ProviderState with ChangeNotifier {
       print("Error");
     }
   }
-  getSliderData(String id) async {
+
+  getSliderData(String id, double lat, double long) async {
     String url =
-        'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=30.4203482&long=31.0699247&cat=$id';
+        'https://ibtikarsoft.net/mapapi/map_slider.php?lang=ar&lat=$lat&long=$long&cat=$id';
     final res = await http.get(Uri.parse(url));
 
     if (res.statusCode == 200) {
@@ -59,9 +60,9 @@ class ProviderState with ChangeNotifier {
     }
   }
 
-  getMarkers(String id ) async {
+  getMarkers(String id, double lat, double long) async {
     String url =
-        'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=30.4203482&long=31.0699247&cat=$id';
+        'https://ibtikarsoft.net/mapapi/map_markers.php?lang=ar&lat=$lat&long=$long&cat=$id';
     final res = await http.get(Uri.parse(url)).then((value) {
       if (value.statusCode == 200) {
         var data = json.decode(value.body);
@@ -84,59 +85,57 @@ class ProviderState with ChangeNotifier {
               ),
               onTap: () {
                 print(element['id']);
-              // sliderData.firstWhere((element1) {
-              //   if(element1['id']!=id){
-              //     Navigator.of(ctx).push(MaterialPageRoute(
-              //         builder: (context) => HospitalDetails(
-              //           lang: double.parse(element1['long']),
-              //           rate: element1['rate'],
-              //           name: element1['name'],
-              //           phone: element1['phone'],
-              //           lat: double.parse(element1['lat']),
-              //           url: 'assets/images/hospital1/z.jpg',
-              //           id: '20',
-              //           data:  [
-              //             {
-              //               "name": element1['name'],
-              //               "brand": "Protect your child with us",
-              //               "price": 2.99,
-              //               "image": "assets/images/hospital1/n1.jpg"
-              //             },
-              //             {
-              //               "name": element1['name'],
-              //               "brand": "Your child is safe",
-              //               "price": 4.99,
-              //               "image": "assets/images/hospital1/n2.jpg"
-              //             },
-              //             {
-              //               "name": element1['name'],
-              //               "brand": "The best baby care",
-              //               "price": 1.49,
-              //               "image": "assets/images/hospital1/n3.jpg"
-              //             },
-              //             {
-              //               "name": element1['name'],
-              //               "brand": "24 hours service",
-              //               "price": 2.99,
-              //               "image": "assets/images/hospital1/n4.jpg"
-              //             },
-              //           ],
-              //           address:
-              //           'د. نشوة حسين العشرى - استشارى طب اطفال وحديثى الولادة والرضاعة الطبيعية',
-              //         )));
-              //   }
-              //   return true;
-              // });
+                sliderData.firstWhere((element1) {
+                  if (element1['id'] != id) {
+                    Navigator.of(ctx).push(MaterialPageRoute(
+                        builder: (context) => HospitalDetails(
+                              lang: double.parse(element1['long']),
+                              rate: element1['rate'],
+                              name: element1['name'],
+                              phone: element1['phone'],
+                              lat: double.parse(element1['lat']),
+                              url: 'assets/images/hospital1/z.jpg',
+                              id: '20',
+                              data: [
+                                {
+                                  "name": element1['name'],
+                                  "brand": "Protect your child with us",
+                                  "price": 2.99,
+                                  "image": "assets/images/hospital1/n1.jpg"
+                                },
+                                {
+                                  "name": element1['name'],
+                                  "brand": "Your child is safe",
+                                  "price": 4.99,
+                                  "image": "assets/images/hospital1/n2.jpg"
+                                },
+                                {
+                                  "name": element1['name'],
+                                  "brand": "The best baby care",
+                                  "price": 1.49,
+                                  "image": "assets/images/hospital1/n3.jpg"
+                                },
+                                {
+                                  "name": element1['name'],
+                                  "brand": "24 hours service",
+                                  "price": 2.99,
+                                  "image": "assets/images/hospital1/n4.jpg"
+                                },
+                              ],
+                              address:
+                                  'د. نشوة حسين العشرى - استشارى طب اطفال وحديثى الولادة والرضاعة الطبيعية',
+                            )));
+                  }
+                  return true;
+                });
               },
             ),
           ));
-
         });
         markers.add(Marker(
           width: 50,
           height: 50,
-          point: LatLng(
-              lat,long),
+          point: LatLng(lat, long),
           builder: (ctx) => const Icon(
             FontAwesomeIcons.locationDot,
             color: Colors.redAccent,
@@ -146,7 +145,6 @@ class ProviderState with ChangeNotifier {
         notifyListeners();
       }
     });
-
   }
 
   Future<Position?> checkLocation() async {
@@ -158,24 +156,32 @@ class ProviderState with ChangeNotifier {
             print("denied");
           } else if (value == LocationPermission.whileInUse) {
             print('go ');
+            val = LocationPermission.whileInUse;
             getCurrentLocation();
+            notifyListeners();
           } else {
-            getCurrentLocation();
+            // getCurrentLocation();
           }
         });
+      } else {
+        getCurrentLocation();
       }
     });
+    notifyListeners();
     return null;
   }
 
   Future<Position?> getCurrentLocation() async {
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     Position? lastPsition = await Geolocator.getLastKnownPosition();
+    print('*------*------------------*************-----------*******--------');
     print(lastPsition?.latitude);
     print(lastPsition?.longitude);
-    lat=lastPsition!.latitude;
-
-    long=lastPsition.longitude;
+    lat = lastPsition!.latitude;
+    long = lastPsition.longitude;
+    getMarkers('0', lat!, long!);
+    getData('0');
+    getSliderData('0', lat!, long!);
     notifyListeners();
     return lastPsition;
     // locationMessage="$position.latitude ,$position.longitude";
@@ -188,12 +194,20 @@ class ProviderState with ChangeNotifier {
     } else {
       print('Connection failed');
     }
-    result=result1;
+    result = result1;
     notifyListeners();
   }
 
-  void changeSlider(){
-    slider=!slider;
+  void changeSlider() {
+    slider = !slider;
+    notifyListeners();
+  }
+
+  void change(MapPosition position, bool bo) {
+    lat = position.center?.latitude;
+    long = position.center?.longitude;
+    print(position.center?.longitude);
+    getMarkers('0', lat!, long!);
     notifyListeners();
   }
 }

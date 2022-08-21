@@ -39,7 +39,7 @@ dependencies:
   internet_connection_checker: ^0.0.1+4
   carousel_slider: ^4.1.1
   flutter_map_marker_cluster: ^0.5.4
-#  external_app_launcher: ^3.0.0
+  flutter_map_location_marker: ^4.1.4
   url_launcher: ^6.1.5
   smooth_page_indicator: ^1.0.0+2
 

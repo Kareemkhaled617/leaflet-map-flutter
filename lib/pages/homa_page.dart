@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:leafleet_map/provider/provider.dart';
 import 'package:provider/provider.dart';
 
-import 'component/text_field.dart';
-import 'component/to_map.dart';
+import '../component/text_field.dart';
+import '../component/to_map.dart';
 import 'hospital_details.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -18,8 +19,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double? lat;
-  double? lan;
+  final MapController mapController = MapController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +29,15 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           FlutterMap(
             options: MapOptions(
+              controller: mapController,
+              onPositionChanged: (position, hasGesture) {
+                x.change(position,hasGesture );
+              },
               plugins: [
                 MarkerClusterPlugin(),
+                const LocationMarkerPlugin(),
               ],
-               center: LatLng(x.lat,x.long),
+              center: LatLng(x.lat!, x.long!),
               // center: LatLng(30.4203482, 31.0699247),
               zoom: 12.0,
             ),
@@ -67,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: IconButton(
                             onPressed: () {
                               x.getData('0');
-                              x.getMarkers('0');
+                              // x.getMarkers('0');
                             },
                             icon: const Icon(
                               FontAwesomeIcons.arrowLeft,
@@ -127,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemBuilder: (context, index) => ElevatedButton.icon(
                         onPressed: () {
                           x.getData(x.category[index]['id']);
-                          x.getMarkers(x.category[index]['id']);
+                          // x.getMarkers(x.category[index]['id']);
                         },
                         icon: Icon(
                           IconDataSolid(
@@ -172,12 +177,14 @@ class _MyHomePageState extends State<MyHomePage> {
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: () async {
+              onTap: () async{
+                // mapController.move(
+                //     LatLng(30.41775030552584, 31.077784895896915), 13);
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => HospitalDetails(
                           url: 'assets/images/hospital1/z.jpg',
                           id: '20',
-                          data:  [
+                          data: [
                             {
                               "name": p.sliderData[index]['name'],
                               "brand": "Protect your child with us",
@@ -191,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               "image": "assets/images/hospital1/n2.jpg"
                             },
                             {
-                              "name":p.sliderData[index]['name'],
+                              "name": p.sliderData[index]['name'],
                               "brand": "The best baby care",
                               "price": 1.49,
                               "image": "assets/images/hospital1/n3.jpg"
@@ -203,8 +210,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               "image": "assets/images/hospital1/n4.jpg"
                             },
                           ],
-                          address:
-                          p.sliderData[index]['address'],
+                          address: p.sliderData[index]['address'],
                           lang: double.parse(p.sliderData[index]['long']),
                           rate: p.sliderData[index]['rate'],
                           name: p.sliderData[index]['name'],
@@ -282,7 +288,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                           child: ListView.builder(
                                             scrollDirection: Axis.horizontal,
                                             shrinkWrap: true,
-                                            itemCount: -(p.sliderData[index]['rate']) + 5,
+                                            itemCount: -(p.sliderData[index]
+                                                    ['rate']) +
+                                                5,
                                             //  itemCount: 5-int.parse(p.sliderData[index]['rate']),
                                             itemBuilder: (context, index) =>
                                                 const Icon(
