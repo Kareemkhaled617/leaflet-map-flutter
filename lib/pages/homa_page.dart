@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
@@ -20,6 +22,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final MapController mapController = MapController();
+  Timer? timer;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,10 @@ class _MyHomePageState extends State<MyHomePage> {
             options: MapOptions(
               controller: mapController,
               onPositionChanged: (position, hasGesture) {
-                x.change(position,hasGesture );
+               // timer =Timer(const Duration(seconds: 6), () {
+               //   x.change(position,hasGesture );
+               // });
+               x.getMarkers('0', position.center!.latitude,position.center!.longitude);
               },
               plugins: [
                 MarkerClusterPlugin(),

@@ -203,11 +203,11 @@ class ProviderState with ChangeNotifier {
     notifyListeners();
   }
 
-  void change(MapPosition position, bool bo) {
-    lat = position.center?.latitude;
-    long = position.center?.longitude;
-    print(position.center?.longitude);
-    getMarkers('0', lat!, long!);
-    notifyListeners();
-  }
+  // void change(MapPosition position, bool bo) {
+  //   lat = position.center?.latitude;
+  //   long = position.center?.longitude;
+  //   print(position.center?.longitude);
+  //   getMarkers('0', lat!, long!);
+  //   notifyListeners();
+  // }
 }
