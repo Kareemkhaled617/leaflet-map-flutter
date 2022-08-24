@@ -65,7 +65,7 @@ class _HospitalDetailsState extends State<HospitalDetails> {
                     Text(
                       post["name"],
                       style: const TextStyle(
-                          fontSize: 28, fontWeight: FontWeight.bold),
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Text(
                       post["brand"],
@@ -118,7 +118,7 @@ class _HospitalDetailsState extends State<HospitalDetails> {
           leading: Card(
             elevation: 5,
             shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: IconButton(
               icon: Icon(
                 FontAwesomeIcons.arrowLeft,
@@ -194,18 +194,20 @@ class _HospitalDetailsState extends State<HospitalDetails> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          widget.name,
-                          style: GoogleFonts.aleo(
-                              fontWeight: FontWeight.w700, fontSize: 20),
+                        Expanded(
+                          child: Text(
+                            widget.name,
+                            style: GoogleFonts.aleo(
+                                fontWeight: FontWeight.w700, fontSize: 20),
+                          ),
                         ),
                         SizedBox(
                           width: 100,
                           child: Text(
                             widget.address,
                             style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600
                             ),
                             softWrap: true,
                             overflow: TextOverflow.ellipsis,
@@ -348,12 +350,12 @@ class _HospitalDetailsState extends State<HospitalDetails> {
 
 class CategoriesScroller extends StatefulWidget {
   CategoriesScroller(
-    this.id, {
-    Key? key,
-    required this.address,
-    required this.lat,
-    required this.long,
-  }) : super(key: key);
+      this.id, {
+        Key? key,
+        required this.address,
+        required this.lat,
+        required this.long,
+      }) : super(key: key);
   String id;
   String address;
   double lat;

@@ -9,6 +9,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:leafleet_map/provider/provider.dart';
 import 'package:provider/provider.dart';
 
+import '../Widgets/custom_container.dart';
+import '../component/color.dart';
 import '../component/text_field.dart';
 import '../component/to_map.dart';
 import 'hospital_details.dart';
@@ -23,37 +25,219 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final MapController mapController = MapController();
   Timer? timer;
+  final PopupController _popupController = PopupController();
+  List<Marker> mark = [];
 
   @override
   Widget build(BuildContext context) {
     var x = Provider.of<ProviderState>(context);
+    if (mark.isNotEmpty) {
+      mark.clear();
+      x.sliderData.forEach((element) {
+        mark.add(Marker(
+          width: 50,
+          height: 50,
+          point: LatLng(
+              double.parse(element['lat']), double.parse(element['long'])),
+          builder: (context) => CustomPaint(
+            painter: Chevron(),
+            child: InkWell(
+              onTap: () {
+                print(element);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => HospitalDetails(
+                          url: 'assets/images/hospital1/z.jpg',
+                          id: '20',
+                          data: [
+                            {
+                              "name": element['name'],
+                              "brand": "Protect your child with us",
+                              "price": 2.99,
+                              "image": "assets/images/hospital1/n1.jpg"
+                            },
+                            {
+                              "name": element['name'],
+                              "brand": "Your child is safe",
+                              "price": 4.99,
+                              "image": "assets/images/hospital1/n2.jpg"
+                            },
+                            {
+                              "name": element['name'],
+                              "brand": "The best baby care",
+                              "price": 1.49,
+                              "image": "assets/images/hospital1/n3.jpg"
+                            },
+                            {
+                              "name": element['name'],
+                              "brand": "24 hours service",
+                              "price": 2.99,
+                              "image": "assets/images/hospital1/n4.jpg"
+                            },
+                          ],
+                          address: element['address'],
+                          lang: double.parse(element['long']),
+                          rate: element['rate'],
+                          name: element['name'],
+                          phone: element['phone'],
+                          lat: double.parse(element['lat']),
+                        )));
+              },
+              child: Icon(
+                IconDataSolid(int.parse(element['icon_name'])),
+                color: HexColor.fromHex(element['color']),
+                size: 25.0,
+              ),
+            ),
+          ),
+        ));
+      });
+    } else {
+      x.sliderData.forEach((element) {
+        mark.add(Marker(
+          width: 50,
+          height: 50,
+          point: LatLng(
+              double.parse(element['lat']), double.parse(element['long'])),
+          builder: (context) => CustomPaint(
+            painter: Chevron(),
+            child: InkWell(
+              onTap: () {
+                print(element);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => HospitalDetails(
+                          url: 'assets/images/hospital1/z.jpg',
+                          id: '20',
+                          data: [
+                            {
+                              "name": element['name'],
+                              "brand": "Protect your child with us",
+                              "price": 2.99,
+                              "image": "assets/images/hospital1/n1.jpg"
+                            },
+                            {
+                              "name": element['name'],
+                              "brand": "Your child is safe",
+                              "price": 4.99,
+                              "image": "assets/images/hospital1/n2.jpg"
+                            },
+                            {
+                              "name": element['name'],
+                              "brand": "The best baby care",
+                              "price": 1.49,
+                              "image": "assets/images/hospital1/n3.jpg"
+                            },
+                            {
+                              "name": element['name'],
+                              "brand": "24 hours service",
+                              "price": 2.99,
+                              "image": "assets/images/hospital1/n4.jpg"
+                            },
+                          ],
+                          address: element['address'],
+                          lang: double.parse(element['long']),
+                          rate: element['rate'],
+                          name: element['name'],
+                          phone: element['phone'],
+                          lat: double.parse(element['lat']),
+                        )));
+              },
+              child: Icon(
+                IconDataSolid(int.parse(element['icon_name'])),
+                color: HexColor.fromHex(element['color']),
+                size: 25.0,
+              ),
+            ),
+          ),
+        ));
+      });
+    }
+    mark.add(Marker(
+      width: 50,
+      height: 50,
+      point: LatLng(x.lat!, x.long!),
+      builder: (ctx) => const Icon(
+        FontAwesomeIcons.locationDot,
+        color: Colors.redAccent,
+        size: 35.0,
+      ),
+    ));
     return Scaffold(
       body: Stack(
         children: [
           FlutterMap(
             options: MapOptions(
-              controller: mapController,
-              onPositionChanged: (position, hasGesture) {
-               // timer =Timer(const Duration(seconds: 6), () {
-               //   x.change(position,hasGesture );
-               // });
-               x.getMarkers('0', position.center!.latitude,position.center!.longitude);
-              },
-              plugins: [
-                MarkerClusterPlugin(),
-                const LocationMarkerPlugin(),
-              ],
-              center: LatLng(x.lat!, x.long!),
-              // center: LatLng(30.4203482, 31.0699247),
-              zoom: 12.0,
-            ),
+                controller: mapController,
+                onPointerHover: (xx,y){
+                   x.getSliderData('0' ,y.latitude,y.longitude);
+                   print(y);
+                },
+                onPointerCancel:  (xx,y){
+                  x.getSliderData('0' ,y.latitude,y.longitude);
+                  print(y);
+                },
+                onPointerDown:(xx,y){
+                  x.getSliderData('0' ,y.latitude,y.longitude);
+                  print(y);
+                } ,
+                plugins: [
+                  MarkerClusterPlugin(),
+                  const LocationMarkerPlugin(),
+                ],
+                onTap: (k, l) => _popupController.hideAllPopups(),
+                center: LatLng(x.lat!, x.long!),
+                // center: LatLng(30.4203482, 31.0699247),
+                zoom: 12.0,
+                interactiveFlags: InteractiveFlag.drag |
+                    InteractiveFlag.pinchMove |
+                    InteractiveFlag.pinchZoom),
             layers: [
               TileLayerOptions(
                 urlTemplate:
                     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 subdomains: ['a', 'b', 'c'],
               ),
-              MarkerLayerOptions(markers: x.markers),
+              // MarkerClusterLayerOptions(
+              //   maxClusterRadius: 120,
+              //   disableClusteringAtZoom: 6,
+              //   size: const Size(40, 40),
+              //   anchor: AnchorPos.align(AnchorAlign.center),
+              //   fitBoundsOptions: const FitBoundsOptions(
+              //     padding: EdgeInsets.all(50),
+              //   ),
+              //   markers: x.markers,
+              //   polygonOptions: const PolygonOptions(
+              //       borderColor: Colors.blueAccent,
+              //       color: Colors.black12,
+              //       borderStrokeWidth: 3),
+              //   popupOptions: PopupOptions(
+              //       popupSnap: PopupSnap.markerTop,
+              //       popupController: _popupController,
+              //       popupBuilder: (_, marker) => GestureDetector(
+              //             onTap: ()  {
+              //             },
+              //             child: Container(
+              //               width: 300,
+              //               height: 200,
+              //               color: Colors.white,
+              //               child: Row(
+              //                 mainAxisAlignment: MainAxisAlignment.start,
+              //                 crossAxisAlignment: CrossAxisAlignment.start,
+              //                 children: [
+              //
+              //                 ],
+              //               ),
+              //             ),
+              //           )),
+              //   builder: (context, markers) {
+              //     return FloatingActionButton(
+              //       onPressed: () {
+              //         print('///////////////-----------------------**********');
+              //       },
+              //       child: Text(markers.length.toString()),
+              //     );
+              //   },
+              // ),
+              MarkerLayerOptions(markers: mark),
             ],
           ),
           Container(
@@ -78,7 +262,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: IconButton(
                             onPressed: () {
                               x.getData('0');
-                              // x.getMarkers('0');
+                              x.getMarkers('0', x.lat!, x.long!);
+                              x.getSliderData('0', x.lat!, x.long!);
                             },
                             icon: const Icon(
                               FontAwesomeIcons.arrowLeft,
@@ -138,7 +323,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       itemBuilder: (context, index) => ElevatedButton.icon(
                         onPressed: () {
                           x.getData(x.category[index]['id']);
-                          // x.getMarkers(x.category[index]['id']);
+                          x.getMarkers(
+                              x.category[index]['id'], x.lat!, x.long!);
+                          x.getSliderData(
+                              x.category[index]['id'], x.lat!, x.long!);
                         },
                         icon: Icon(
                           IconDataSolid(
@@ -162,7 +350,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => x.getCurrentLocation(),
+        onPressed: () async =>
+            {mapController.move(LatLng(x.lat!, x.long!), 12)},
         backgroundColor: Colors.white,
         child: const Icon(
           FontAwesomeIcons.locationArrow,
@@ -183,9 +372,7 @@ class _MyHomePageState extends State<MyHomePage> {
           itemBuilder: (context, index) => Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
-              onTap: () async{
-                // mapController.move(
-                //     LatLng(30.41775030552584, 31.077784895896915), 13);
+              onTap: () async {
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => HospitalDetails(
                           url: 'assets/images/hospital1/z.jpg',

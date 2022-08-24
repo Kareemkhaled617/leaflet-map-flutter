@@ -34,9 +34,11 @@ class ProviderState with ChangeNotifier {
         'https://ibtikarsoft.net/mapapi/categories.php?lang=en&cat=$id';
     final res = await http.get(Uri.parse(url));
     if (res.statusCode == 200) {
-      var data = json.decode(res.body);
-      category = data;
-      notifyListeners();
+      List data = json.decode(res.body);
+      if (data.isNotEmpty) {
+        category = data;
+        notifyListeners();
+      }
       return data;
     } else {
       print("Error");
@@ -51,6 +53,7 @@ class ProviderState with ChangeNotifier {
     if (res.statusCode == 200) {
       var data = json.decode(res.body);
       sliderData = data;
+      notifyListeners();
       print('**********************************');
       print(sliderData);
       notifyListeners();
@@ -67,6 +70,7 @@ class ProviderState with ChangeNotifier {
       if (value.statusCode == 200) {
         var data = json.decode(value.body);
         location = data;
+        notifyListeners();
         markers.clear();
         location.forEach((element) {
           markers.add(Marker(
@@ -74,61 +78,13 @@ class ProviderState with ChangeNotifier {
             height: 50,
             point: LatLng(
                 double.parse(element['lat']), double.parse(element['long'])),
-            builder: (ctx) => InkWell(
-              child: CustomPaint(
-                painter: Chevron(),
-                child: Icon(
-                  IconDataSolid(int.parse(element['icon_name'])),
-                  color: HexColor.fromHex(element['color']),
-                  size: 25.0,
-                ),
+            builder: (ctx) => CustomPaint(
+              painter: Chevron(),
+              child: Icon(
+                IconDataSolid(int.parse(element['icon_name'])),
+                color: HexColor.fromHex(element['color']),
+                size: 25.0,
               ),
-              onTap: () {
-                print(element['id']);
-                sliderData.firstWhere((element1) {
-                  if (element1['id'] != id) {
-                    Navigator.of(ctx).push(MaterialPageRoute(
-                        builder: (context) => HospitalDetails(
-                              lang: double.parse(element1['long']),
-                              rate: element1['rate'],
-                              name: element1['name'],
-                              phone: element1['phone'],
-                              lat: double.parse(element1['lat']),
-                              url: 'assets/images/hospital1/z.jpg',
-                              id: '20',
-                              data: [
-                                {
-                                  "name": element1['name'],
-                                  "brand": "Protect your child with us",
-                                  "price": 2.99,
-                                  "image": "assets/images/hospital1/n1.jpg"
-                                },
-                                {
-                                  "name": element1['name'],
-                                  "brand": "Your child is safe",
-                                  "price": 4.99,
-                                  "image": "assets/images/hospital1/n2.jpg"
-                                },
-                                {
-                                  "name": element1['name'],
-                                  "brand": "The best baby care",
-                                  "price": 1.49,
-                                  "image": "assets/images/hospital1/n3.jpg"
-                                },
-                                {
-                                  "name": element1['name'],
-                                  "brand": "24 hours service",
-                                  "price": 2.99,
-                                  "image": "assets/images/hospital1/n4.jpg"
-                                },
-                              ],
-                              address:
-                                  'د. نشوة حسين العشرى - استشارى طب اطفال وحديثى الولادة والرضاعة الطبيعية',
-                            )));
-                  }
-                  return true;
-                });
-              },
             ),
           ));
         });
@@ -203,11 +159,10 @@ class ProviderState with ChangeNotifier {
     notifyListeners();
   }
 
-  // void change(MapPosition position, bool bo) {
-  //   lat = position.center?.latitude;
-  //   long = position.center?.longitude;
-  //   print(position.center?.longitude);
-  //   getMarkers('0', lat!, long!);
-  //   notifyListeners();
-  // }
+  void change(lat1,long1) {
+    lat = lat1;
+    long =long1;
+     getSliderData('0', lat1!, long1!);
+    notifyListeners();
+  }
 }
